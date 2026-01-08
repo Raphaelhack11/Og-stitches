@@ -10,6 +10,9 @@
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-hot-toast": "latest"
+    "react-hot-toast": "latest",
+    "tailwindcss": "latest",
+    "postcss": "latest",
+    "autoprefixer": "latest"
   }
 }
