@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 
 // --- CONFIGURATION ---
-// Replace these with your actual details from @BotFather and @userinfobot
-const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE';
-const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID_HERE';
+const TELEGRAM_BOT_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID;
 
 const products = [
   { id: 1, name: "Signature White Senator", price: 35000, image: "https://i.imgur.com/AxhTo9F.jpeg" },
@@ -37,13 +36,13 @@ export default function OGStitches() {
     const loadingToast = toast.loading('Sending booking to OG Stitches...');
 
     const message = `
-🇳🇬 *NEW APPOINTMENT: OG STITCHES*
+🇳🇬 *NEW ORDER: OG STITCHES*
 --------------------------
 *Item:* ${selectedProduct.name}
 *Quantity:* ${formData.qty}
 *Total:* ₦${(selectedProduct.price * formData.qty).toLocaleString()}
 
-*Client Information:*
+*Client Details:*
 👤 *Name:* ${formData.name}
 📞 *Phone:* ${formData.number}
 🏠 *Address:* ${formData.address}
@@ -64,14 +63,14 @@ export default function OGStitches() {
       });
 
       if (response.ok) {
-        toast.success('Successfully Scheduled! We will contact you.', { id: loadingToast });
+        toast.success('Successfully Scheduled!', { id: loadingToast });
         setSelectedProduct(null);
         setFormData({ name: '', number: '', address: '', age: '', sex: '', qty: 1 });
       } else {
         throw new Error();
       }
     } catch (error) {
-      toast.error('Error sending message. Check your internet.', { id: loadingToast });
+      toast.error('Error sending message. Please try WhatsApp.', { id: loadingToast });
     } finally {
       setIsSubmitting(false);
     }
@@ -81,41 +80,45 @@ export default function OGStitches() {
     <div className="bg-white min-h-screen font-sans text-black selection:bg-black selection:text-white">
       <Toaster position="top-center" />
 
-      {/* Navigation */}
-      <nav className="border-b border-gray-100 p-5 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-50">
-        <div className="text-2xl font-black tracking-tighter">OG STITCHES</div>
-        <div className="hidden md:flex space-x-10 text-[10px] font-bold uppercase tracking-[0.2em]">
-          <a href="#shop" className="hover:opacity-50 transition">Collection</a>
-          <a href="#about" className="hover:opacity-50 transition">The Brand</a>
-          <a href="#contact" className="hover:opacity-50 transition">Contact</a>
+      {/* Navigation & Logo */}
+      <nav className="border-b border-gray-100 p-6 flex flex-col items-center sticky top-0 bg-white/95 backdrop-blur-md z-50">
+        <img 
+          src="https://i.imgur.com/79M6m9E.png" 
+          alt="OG Stitches Logo" 
+          className="h-24 w-auto mb-4" 
+        />
+        <div className="flex space-x-8 text-[11px] font-black uppercase tracking-[0.3em]">
+          <a href="#shop" className="hover:text-amber-600 transition">Collection</a>
+          <a href="#about" className="hover:text-amber-600 transition">Our Story</a>
+          <a href="#contact" className="hover:text-amber-600 transition">Contact</a>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-24 pb-16 px-6 text-center">
-        <h1 className="text-7xl md:text-9xl font-serif mb-8 tracking-tighter italic">Defined by Detail.</h1>
-        <p className="max-w-2xl mx-auto text-gray-400 text-sm uppercase tracking-[0.3em] leading-relaxed">
-          Premium Bespoke Tailoring — No. 2 Peu Street, Badagry.
+      <section className="py-20 px-6 text-center">
+        <h1 className="text-5xl md:text-8xl font-serif mb-6 tracking-tighter italic">Elegance in Every Stitch.</h1>
+        <p className="max-w-xl mx-auto text-gray-400 text-[10px] uppercase tracking-[0.5em] leading-relaxed">
+          Premium Bespoke Tailoring | Badagry, Lagos
         </p>
       </section>
 
       {/* Product Grid */}
-      <main id="shop" className="max-w-[1400px] mx-auto py-12 px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+      <main id="shop" className="max-w-7xl mx-auto py-12 px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-20">
         {products.map((item) => (
-          <div key={item.id} className="group cursor-default">
-            <div className="aspect-[4/5] bg-gray-50 overflow-hidden relative mb-6">
-              <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-[1.5s] ease-out" />
-              <div className="absolute bottom-4 left-4 bg-white px-3 py-1.5 text-[11px] font-bold">
+          <div key={item.id} className="group">
+            <div className="aspect-[3/4] bg-gray-50 overflow-hidden relative mb-6 shadow-sm">
+              <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-1000" />
+              <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 text-[11px] font-bold tracking-widest">
                 ₦{item.price.toLocaleString()}
               </div>
             </div>
-            <div className="flex justify-between items-center px-1">
-              <h3 className="text-xs font-bold uppercase tracking-widest">{item.name}</h3>
+            <div className="text-center">
+              <h3 className="text-xs font-bold uppercase tracking-[0.2em] mb-3">{item.name}</h3>
               <button 
                 onClick={() => setSelectedProduct(item)}
-                className="text-[10px] uppercase font-black border-b-2 border-black pb-1 hover:text-gray-500 hover:border-gray-500 transition"
+                className="inline-block bg-black text-white text-[10px] px-8 py-3 uppercase font-black tracking-widest hover:bg-amber-700 transition duration-300"
               >
-                Schedule Measurement
+                Secure This Fit
               </button>
             </div>
           </div>
@@ -123,98 +126,81 @@ export default function OGStitches() {
       </main>
 
       {/* About Section */}
-      <section id="about" className="my-32 py-24 bg-black text-white text-center px-6">
-        <h2 className="text-4xl font-serif mb-8 italic">Our Story</h2>
-        <p className="max-w-3xl mx-auto text-gray-400 text-lg leading-relaxed font-light">
-          OG Stitches is more than a fashion house; it is a commitment to excellence. 
-          Located in Badagry, Lagos, we specialize in crafting bespoke traditional and contemporary 
-          men's wear that fits perfectly and commands respect. Every stitch is handled with professional care.
+      <section id="about" className="my-24 py-24 bg-stone-50 border-y border-stone-100 text-center px-6">
+        <h2 className="text-3xl font-serif mb-8 italic">The Brand</h2>
+        <p className="max-w-2xl mx-auto text-stone-500 text-sm leading-loose tracking-wide">
+          OG Stitches is a premier fashion house located at No. 2 Peu Street, Badagry. 
+          We specialize in high-end native wears, corporate suits, and bespoke senators 
+          designed to command respect. Every garment is a masterpiece, crafted with 
+          precision and a deep respect for African heritage.
         </p>
       </section>
 
       {/* Booking Modal */}
       {selectedProduct && (
-        <div className="fixed inset-0 bg-white z-[100] overflow-y-auto flex items-center justify-center p-4 md:p-12">
-          <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            {/* Modal Image */}
-            <div className="hidden md:block h-[600px]">
-              <img src={selectedProduct.image} className="w-full h-full object-cover shadow-2xl" alt="Selection" />
-            </div>
+        <div className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-md p-8 relative">
+            <button onClick={() => setSelectedProduct(null)} className="absolute top-4 right-6 text-3xl font-light">✕</button>
+            
+            <h2 className="text-2xl font-serif mb-1 italic">Order Summary</h2>
+            <p className="text-[10px] text-stone-400 uppercase tracking-widest mb-8 border-b pb-4">Style: {selectedProduct.name}</p>
 
-            {/* Modal Form */}
-            <div className="relative">
-              <button onClick={() => setSelectedProduct(null)} className="absolute -top-12 right-0 text-4xl font-light hover:rotate-90 transition inline-block">✕</button>
+            <form onSubmit={handleBooking} className="space-y-4">
+              <input type="text" placeholder="Full Name" required className="w-full border-b border-gray-100 py-3 outline-none focus:border-black text-sm" onChange={e => setFormData({...formData, name: e.target.value})} />
+              <div className="grid grid-cols-2 gap-4">
+                <input type="tel" placeholder="Phone" required className="w-full border-b border-gray-100 py-3 outline-none focus:border-black text-sm" onChange={e => setFormData({...formData, number: e.target.value})} />
+                <input type="number" placeholder="Age" required className="w-full border-b border-gray-100 py-3 outline-none focus:border-black text-sm" onChange={e => setFormData({...formData, age: e.target.value})} />
+              </div>
+              <select className="w-full border-b border-gray-100 py-3 outline-none bg-transparent text-sm" required onChange={e => setFormData({...formData, sex: e.target.value})}>
+                <option value="">Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+              <input type="text" placeholder="Delivery Address" required className="w-full border-b border-gray-100 py-3 outline-none focus:border-black text-sm" onChange={e => setFormData({...formData, address: e.target.value})} />
               
-              <h2 className="text-3xl font-serif mb-1 italic">Book Measurement</h2>
-              <p className="text-xs text-gray-400 uppercase tracking-widest mb-8">Item: {selectedProduct.name}</p>
-
-              <form onSubmit={handleBooking} className="space-y-5">
-                <input type="text" placeholder="Full Name" required className="w-full border-b border-gray-200 py-4 outline-none focus:border-black transition" onChange={e => setFormData({...formData, name: e.target.value})} />
-                
-                <div className="grid grid-cols-2 gap-6">
-                  <input type="tel" placeholder="Phone Number" required className="w-full border-b border-gray-200 py-4 outline-none focus:border-black transition" onChange={e => setFormData({...formData, number: e.target.value})} />
-                  <input type="number" placeholder="Age" required className="w-full border-b border-gray-200 py-4 outline-none focus:border-black transition" onChange={e => setFormData({...formData, age: e.target.value})} />
+              <div className="flex items-center justify-between py-4 border-b border-gray-50">
+                <span className="text-[10px] font-bold uppercase tracking-widest">Quantity</span>
+                <div className="flex items-center gap-6">
+                  <button type="button" className="text-xl" onClick={() => setFormData({...formData, qty: Math.max(1, formData.qty - 1)})}>—</button>
+                  <span className="font-bold">{formData.qty}</span>
+                  <button type="button" className="text-xl" onClick={() => setFormData({...formData, qty: formData.qty + 1})}>＋</button>
                 </div>
+              </div>
 
-                <select className="w-full border-b border-gray-200 py-4 outline-none bg-transparent" required onChange={e => setFormData({...formData, sex: e.target.value})}>
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
+              <div className="flex justify-between items-center py-6">
+                <span className="text-[10px] font-bold uppercase text-stone-400">Total Price</span>
+                <span className="text-2xl font-black italic">₦{(selectedProduct.price * formData.qty).toLocaleString()}</span>
+              </div>
 
-                <input type="text" placeholder="Shipping/Home Address" required className="w-full border-b border-gray-200 py-4 outline-none focus:border-black transition" onChange={e => setFormData({...formData, address: e.target.value})} />
-                
-                <div className="flex items-center justify-between py-6">
-                  <span className="text-xs font-bold uppercase tracking-tighter">Quantity</span>
-                  <div className="flex items-center gap-8">
-                    <button type="button" className="text-2xl" onClick={() => setFormData({...formData, qty: Math.max(1, formData.qty - 1)})}>—</button>
-                    <span className="font-bold text-xl">{formData.qty}</span>
-                    <button type="button" className="text-2xl" onClick={() => setFormData({...formData, qty: formData.qty + 1})}>＋</button>
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-baseline pt-4 border-t border-black">
-                  <span className="text-[10px] font-bold uppercase">Estimated Price</span>
-                  <span className="text-3xl font-black">₦{(selectedProduct.price * formData.qty).toLocaleString()}</span>
-                </div>
-
-                <button 
-                  type="submit" 
-                  disabled={isSubmitting}
-                  className="bg-black text-white w-full py-5 text-xs font-bold uppercase tracking-[0.3em] hover:bg-gray-800 disabled:bg-gray-200 transition"
-                >
-                  {isSubmitting ? 'Sending Request...' : 'Schedule Appointment'}
-                </button>
-              </form>
-            </div>
+              <button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="bg-black text-white w-full py-4 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-stone-800 transition"
+              >
+                {isSubmitting ? 'Processing...' : 'Schedule Now'}
+              </button>
+            </form>
           </div>
         </div>
       )}
 
       {/* Footer */}
-      <footer id="contact" className="py-20 px-6 border-t border-gray-100 bg-gray-50">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-16">
-          <div className="col-span-1">
-            <h4 className="font-black text-2xl mb-4 italic uppercase tracking-tighter">OG Stitches</h4>
-            <p className="text-sm text-gray-400 leading-relaxed mb-8">Your trusted partner in high-quality bespoke African attire.</p>
-            <div className="flex gap-4">
-              <a href="https://wa.me/2347045617191" className="bg-green-500 text-white p-3 rounded-full hover:bg-green-600 transition">
-                WhatsApp
-              </a>
-            </div>
+      <footer id="contact" className="py-20 px-6 border-t border-gray-50 bg-stone-900 text-white">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
+          <div>
+            <h4 className="font-serif text-2xl italic mb-6">OG Stitches</h4>
+            <p className="text-stone-400 text-xs leading-loose tracking-widest">NO. 2 PEU STREET, BADAGRY, LAGOS STATE.</p>
           </div>
           
           <div className="space-y-4">
-            <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-300">Contact Details</h5>
-            <p className="text-sm font-medium leading-loose">📍 No. 2 Peu Street, Badagry, Lagos State</p>
-            <p className="text-sm font-medium">📞 09116921537</p>
-            <p className="text-sm font-medium underline">📧 ezunraphael53@gmail.com</p>
+            <h5 className="text-[10px] font-black uppercase tracking-[0.3em] text-stone-500">Inquiries</h5>
+            <p className="text-sm font-light">Call: 09116921537</p>
+            <p className="text-sm font-light">WhatsApp: 07045617191</p>
+            <p className="text-sm font-light">ezunraphael53@gmail.com</p>
           </div>
 
-          <div className="space-y-4">
-            <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-300">Operations</h5>
-            <p className="text-sm text-gray-500">Monday — Saturday<br />09:00 AM - 06:00 PM</p>
-            <p className="text-[10px] text-gray-400 uppercase tracking-widest">Global Shipping Available</p>
+          <div className="flex flex-col gap-4">
+             <a href="https://wa.me/2347045617191" className="bg-white text-black px-8 py-4 text-center text-[10px] font-black uppercase tracking-widest hover:bg-stone-200 transition">Contact via WhatsApp</a>
           </div>
         </div>
       </footer>
